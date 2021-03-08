@@ -19,7 +19,7 @@ defmodule TicTacToeWeb.Router do
 
     live "/", PageLive, :index
     get "home", HomeController, :index
-    live "/game", GameLive, :index
+    live "/game", GameLive
   end
 
   # Other scopes may use custom stacks.

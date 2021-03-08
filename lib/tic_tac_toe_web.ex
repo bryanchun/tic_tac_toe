@@ -47,6 +47,7 @@ defmodule TicTacToeWeb do
       use Phoenix.LiveView,
         layout: {TicTacToeWeb.LayoutView, "live.html"}
 
+      import Surface
       unquote(view_helpers())
     end
   end

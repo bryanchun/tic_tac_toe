@@ -21,6 +21,30 @@ Ready to run in production? Please [check our deployment guides](https://hexdocs
 
 ---
 
+## TODOs
+
+- [ ] A functional clone (See https://reactjs.org/tutorial/tutorial.html)
+- [ ] Fix root layout to brand it in this game
+- [ ] Host it on github.io
+
+---
+
+## Documentations to look at
+
+#### LiveView
+
+- [Search for docs in LiveView](https://hexdocs.pm/phoenix_live_view/search.html?q=foo)
+- [Bindings in LiveView](https://hexdocs.pm/phoenix_live_view/bindings.html)
+
+#### Surface
+
+- [Surface repo on GitHub](https://github.com/msaraiva/surface)
+- [Surface docs: Components Basics](http://surface-demo.msaraiva.io/components_basics)
+- [Surface docs: Properties](http://surface-demo.msaraiva.io/properties)
+- [A realworld Surface app for looking up usages](https://github.com/razuf/elixir-phoenix-surface-realworld)
+
+---
+
 ## Steps
 
 Stepping through the [Guides](https://hexdocs.pm/phoenix/overview.html)

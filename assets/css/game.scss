@@ -1,0 +1,19 @@
+button.square {
+    color: black;
+    text-align: center;
+    font-size: 48px;
+    font-weight: bold;
+    border: 1px solid #999;
+
+    width: 100px;
+    height: 100px;
+
+    float: left;
+    margin: 0;
+}
+
+div.board-row {
+    clear: both;
+    content: "";
+    display: table;
+}
