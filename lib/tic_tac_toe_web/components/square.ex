@@ -8,7 +8,7 @@ defmodule TicTacToeWeb.Components.Square do
     The status of this square: we will highlight it when someone won with this sqaure,
     and disable it when someone didn't won with this sqaure or it's a draw
   """
-  prop status, :string, values: ["playing", "won", "closed"], default: "playing"
+  prop status, :string, values: ["available", "played", "won", "disabled"], default: "available"
 
   @doc "The event name triggered when the square gets clicked"
   prop click, :event
@@ -35,7 +35,6 @@ defmodule TicTacToeWeb.Components.Square do
       class="square"
       style="background-color: {{ to_color(@status) }};"
       :on-click={{ @click }}
-      phx-value-piece={{ @piece }}
       phx-value-status={{ @status }}
       phx-value-loc_x={{ @loc_x }}
       phx-value-loc_y={{ @loc_y }}
