@@ -8,7 +8,7 @@ defmodule TicTacToe.Application do
   def start(_type, _args) do
     children = [
       # Start the Ecto repository
-      TicTacToe.Repo,
+      #TicTacToe.Repo,
       # Start the Telemetry supervisor
       TicTacToeWeb.Telemetry,
       # Start the PubSub system
