@@ -81,13 +81,17 @@ defmodule TicTacToeWeb.Components.Board do
       Enum.all?(line, & Map.get(pieces, &1) == whose_turn),
       do: line
 
-    # Derive the next {statuses, winner_piece} based on whether there is won lines
     resolve_game({statuses, whose_turn}, locs, won_lines)
   end
 
-  defp resolve_game({statuses, _whose_turn}, {_loc_x, _loc_y} = locs, []) do
+  @doc """
+    Derive the next {statuses, winner_piece} based on whether there are won lines
+  """
+  def resolve_game({statuses, _whose_turn}, {_loc_x, _loc_y} = locs, []) do
     # Mark the locs as status "played"
-    statuses = statuses |> Map.put(locs, "played")
+    statuses =
+      statuses
+      |> Map.put(locs, "played")
 
     # Derive the winner_piece
     # If all squares have status "played" -> Draw
@@ -98,7 +102,7 @@ defmodule TicTacToeWeb.Components.Board do
 
     {statuses, winner_piece}
   end
-  defp resolve_game({statuses, whose_turn}, _locs, won_lines) do
+  def resolve_game({statuses, whose_turn}, _locs, won_lines) do
     # For each square in the won lines, mark them as status "won"
     won_squares =
       won_lines
@@ -145,10 +149,10 @@ defmodule TicTacToeWeb.Components.Board do
 
     socket =
       socket
-      |> update(:statuses, fn _ -> statuses end)
-      |> update(:pieces, fn _ -> pieces end)
-      |> update(:whose_turn, & next_turn(&1))
-      |> update(:winner_piece, fn _ -> winner_piece end)
+      |> update(:statuses,      fn _ -> statuses end)
+      |> update(:pieces,        fn _ -> pieces end)
+      |> update(:whose_turn,    & next_turn(&1))
+      |> update(:winner_piece,  fn _ -> winner_piece end)
 
     {:noreply, socket}
   end
@@ -163,10 +167,10 @@ defmodule TicTacToeWeb.Components.Board do
   ) do
     socket =
       socket
-      |> update(:statuses, fn _ -> @initial_statuses end)
-      |> update(:pieces, fn _ -> @initial_pieces end)
-      |> update(:whose_turn, fn _ -> @initial_whose_turn end)
-      |> update(:winner_piece, fn _ -> @initial_winner_piece end)
+      |> update(:statuses,      fn _ -> @initial_statuses end)
+      |> update(:pieces,        fn _ -> @initial_pieces end)
+      |> update(:whose_turn,    fn _ -> @initial_whose_turn end)
+      |> update(:winner_piece,  fn _ -> @initial_winner_piece end)
     {:noreply, socket}
   end
 end
