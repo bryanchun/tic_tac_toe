@@ -5,19 +5,17 @@ defmodule TicTacToeWeb.Components.Board do
 
   @squares for row_idx <- [1, 2, 3], col_idx <- [1, 2, 3], do: {row_idx, col_idx}
 
-  data statuses, :map,
-    default: for square <- @squares,
-      into: %{},
-      do: {square, "available"}
+  @initial_statuses for square <- @squares, into: %{}, do: {square, "available"}
+  data statuses, :map, default: @initial_statuses
 
-  data pieces, :map,
-    default: for square <- @squares,
-      into: %{},
-      do: {square, nil}
+  @initial_pieces for square <- @squares, into: %{}, do: {square, nil}
+  data pieces, :map, default: @initial_pieces
 
-  data whose_turn, :string, default: "X"
+  @initial_whose_turn "X"
+  data whose_turn, :string, default: @initial_whose_turn
 
-  data winner_piece, :string, default: nil
+  @initial_winner_piece nil
+  data winner_piece, :string, default: @initial_winner_piece
 
   def render(assigns) do
     ~H"""
@@ -36,7 +34,14 @@ defmodule TicTacToeWeb.Components.Board do
         </div>
       </div>
       <div class="container-col">
-        {{ next_instruction(@whose_turn, @winner_piece) }}
+        <div class="instruction">
+          {{ next_instruction(@whose_turn, @winner_piece) }}
+        </div>
+        <button
+          :on-click="restart"
+        >
+          Restart
+        </button>
       </div>
     </div>
     """
@@ -150,4 +155,18 @@ defmodule TicTacToeWeb.Components.Board do
   def handle_event("move", %{"status" => "played"}, socket),    do: {:noreply, socket}
   def handle_event("move", %{"status" => "won"}, socket),       do: {:noreply, socket}
   def handle_event("move", %{"status" => "disabled"}, socket),  do: {:noreply, socket}
+
+  def handle_event(
+    "restart",
+    _params,
+    socket
+  ) do
+    socket =
+      socket
+      |> update(:statuses, fn _ -> @initial_statuses end)
+      |> update(:pieces, fn _ -> @initial_pieces end)
+      |> update(:whose_turn, fn _ -> @initial_whose_turn end)
+      |> update(:winner_piece, fn _ -> @initial_winner_piece end)
+    {:noreply, socket}
+  end
 end
