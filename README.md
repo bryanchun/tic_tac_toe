@@ -25,6 +25,7 @@ Ready to run in production? Please [check our deployment guides](https://hexdocs
 ## TODOs
 
 - [ ] A functional clone (See https://reactjs.org/tutorial/tutorial.html)
+- [ ] Reset button
 - [ ] Fix root layout to brand it in this game
 
 ---

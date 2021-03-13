@@ -3,15 +3,17 @@ defmodule TicTacToeWeb.Components.Board do
 
   alias TicTacToeWeb.Components.Square
 
+  @squares for row_idx <- [1, 2, 3], col_idx <- [1, 2, 3], do: {row_idx, col_idx}
+
   data statuses, :map,
-    default: for row_idx <- [1, 2, 3], col_idx <- [1, 2, 3],
+    default: for square <- @squares,
       into: %{},
-      do: {{row_idx, col_idx}, "available"}
+      do: {square, "available"}
 
   data pieces, :map,
-    default: for row_idx <- [1, 2, 3], col_idx <- [1, 2, 3],
+    default: for square <- @squares,
       into: %{},
-      do: {{row_idx, col_idx}, nil}
+      do: {square, nil}
 
   data whose_turn, :string, default: "X"
 
@@ -40,89 +42,84 @@ defmodule TicTacToeWeb.Components.Board do
     """
   end
 
-  defp next_instruction(whose_turn, nil), do: "Next player: #{next_turn(whose_turn)}"
-  defp next_instruction(_whose_turn, winner_piece) when winner_piece in ["O", "X"], do: "Winner: #{winner_piece}"
-  defp next_instruction(_whose_turn, " "), do: "Draw"
+  def next_instruction(whose_turn, nil), do: "Next player: #{whose_turn}"
+  def next_instruction(_whose_turn, winner_piece) when winner_piece in ["O", "X"], do: "Winner: #{winner_piece}"
+  def next_instruction(_whose_turn, " "), do: "Draw"
 
-  defp next_turn("X"), do: "O"
-  defp next_turn("O"), do: "X"
+  # Simple binary flip
+  def next_turn("X"), do: "O"
+  def next_turn("O"), do: "X"
 
+  @winning_lines [
+    # Horizontal lines
+    [{1, 1}, {1, 2}, {1, 3}],
+    [{2, 1}, {2, 2}, {2, 3}],
+    [{3, 1}, {3, 2}, {3, 3}],
+    # Vertical lines
+    [{1, 1}, {2, 1}, {3, 1}],
+    [{1, 2}, {2, 2}, {3, 2}],
+    [{1, 3}, {2, 3}, {3, 3}],
+    # Diagonal lines
+    [{1, 1}, {2, 2}, {3, 3}],
+    [{1, 3}, {2, 2}, {3, 1}]
+  ]
 
-  # TODO: Debug winning not working
-  defp next_statuses({statuses, whose_turn}, pieces, {1, 1}), do:
-    [
-      [{1, 1}, {1, 2}, {1, 3}],
-      [{1, 1}, {2, 1}, {3, 1}],
-      [{1, 1}, {2, 2}, {3, 3}]
-    ] |> next_statuses_lines({statuses, whose_turn}, pieces)
-  defp next_statuses({statuses, whose_turn}, pieces, {1, 2}), do:
-    [
-      [{1, 1}, {1, 2}, {1, 3}],
-      [{1, 2}, {2, 2}, {3, 2}]
-    ] |> next_statuses_lines({statuses, whose_turn}, pieces)
-  defp next_statuses({statuses, whose_turn}, pieces, {1, 3}), do:
-    [
-      [{1, 1}, {1, 2}, {1, 3}],
-      [{1, 3}, {2, 3}, {3, 3}],
-      [{1, 3}, {2, 2}, {3, 1}]
-    ] |> next_statuses_lines({statuses, whose_turn}, pieces)
-  defp next_statuses({statuses, whose_turn}, pieces, {2, 1}), do:
-    [
-      [{1, 1}, {2, 1}, {3, 1}],
-      [{2, 1}, {2, 2}, {2, 3}]
-    ] |> next_statuses_lines({statuses, whose_turn}, pieces)
-  defp next_statuses({statuses, whose_turn}, pieces, {2, 2}), do:
-    [
-      [{1, 2}, {2, 2}, {3, 2}],
-      [{2, 1}, {2, 2}, {2, 3}],
-      [{1, 1}, {2, 2}, {3, 3}],
-      [{1, 3}, {2, 2}, {3, 1}]
-    ] |> next_statuses_lines({statuses, whose_turn}, pieces)
-  defp next_statuses({statuses, whose_turn}, pieces, {2, 3}), do:
-    [
-      [{1, 3}, {2, 3}, {3, 3}],
-      [{2, 1}, {2, 2}, {2, 3}]
-    ] |> next_statuses_lines({statuses, whose_turn}, pieces)
-  defp next_statuses({statuses, whose_turn}, pieces, {3, 1}), do:
-    [
-      [{3, 1}, {3, 2}, {3, 3}],
-      [{1, 1}, {2, 1}, {3, 1}],
-      [{3, 1}, {2, 2}, {1, 3}]
-    ] |> next_statuses_lines({statuses, whose_turn}, pieces)
-  defp next_statuses({statuses, whose_turn}, pieces, {3, 2}), do:
-    [
-      [{3, 1}, {3, 2}, {3, 3}],
-      [{1, 2}, {2, 2}, {3, 2}]
-    ] |> next_statuses_lines({statuses, whose_turn}, pieces)
-  defp next_statuses({statuses, whose_turn}, pieces, {3, 3}), do:
-    [
-      [{3, 1}, {3, 2}, {3, 3}],
-      [{1, 3}, {2, 3}, {3, 3}],
-      [{1, 1}, {2, 2}, {3, 3}]
-    ] |> next_statuses_lines({statuses, whose_turn}, pieces)
-  defp next_statuses({statuses, _whose_turn}, _pieces, _locs), do: {statuses, nil}
+  @doc """
+    Derive the next game state {statuses, winner_piece}
+  """
+  def next_game_state({statuses, whose_turn}, {_loc_x, _loc_y} = locs, pieces) do
+    won_lines = for line <- @winning_lines,
+      # Derive the winning lines subset for the taken square in this move
+      locs in line,
+      # Then restrict these winnable lines to those that contribtued to a win
+      # Note that there can be multiple won lines in a game
+      Enum.all?(line, & Map.get(pieces, &1) == whose_turn),
+      do: line
 
-  defp next_statuses_lines(lines, {statuses, whose_turn}, pieces), do:
-    lines
-    |> Enum.reduce({statuses, whose_turn}, & next_statuses_line(&2, pieces, &1))
-    # TODO: How to make squares disabled? How to reduce the correct winner_piece?
+    # Derive the next {statuses, winner_piece} based on whether there is won lines
+    resolve_game({statuses, whose_turn}, locs, won_lines)
+  end
 
-  defp next_statuses_line({statuses, whose_turn}, pieces, line) do
-    {statuses, winner_piece} = cond do
-      line |> Enum.all?(& Map.get(pieces, &1) == whose_turn) ->
-        {
-          statuses |> Map.merge(for square <- line, into: %{}, do: {square, "won"}),
-          whose_turn
-        }
-      true ->
-        {
-          statuses,
-          nil
-        }
-    end
+  defp resolve_game({statuses, _whose_turn}, {_loc_x, _loc_y} = locs, []) do
+    # Mark the locs as status "played"
+    statuses = statuses |> Map.put(locs, "played")
+
+    # Derive the winner_piece
+    # If all squares have status "played" -> Draw
+    # Otherwise -> Continue (still have available squares out there)
+    winner_piece = if Enum.all?(@squares, & Map.get(statuses, &1) == "played"),
+      do: " ",    # Draw
+      else: nil   # Continue
 
     {statuses, winner_piece}
   end
+  defp resolve_game({statuses, whose_turn}, _locs, won_lines) do
+    # For each square in the won lines, mark them as status "won"
+    won_squares =
+      won_lines
+      |> List.flatten()
+      |> Enum.dedup()
+
+    # For the rest of still-"available" sqaures, mark them as status "disabled"
+    unused_squares = for square <- @squares,
+      square not in won_squares and Map.get(statuses, square) == "available",
+      do: square
+
+    statuses =
+      statuses
+      |> Map.merge(for square <- won_squares, into: %{}, do: {square, "won"})
+      |> Map.merge(for square <- unused_squares, into: %{}, do: {square, "disabled"})
+
+    # Return whose_turn as the winner_piece
+    winner_piece =
+      whose_turn  # Won
+
+    {statuses, winner_piece}
+  end
+  # By the end of the game
+  # No "available" status squares are left
+  # All squares can either be "won", "played" (played but not used to win), "disable" (not even played before game ends)
+
 
   def handle_event(
     "move",
@@ -132,14 +129,14 @@ defmodule TicTacToeWeb.Components.Board do
   ) do
     {loc_x, _} = Integer.parse(loc_x)
     {loc_y, _} = Integer.parse(loc_y)
-    IO.puts("Moved { #{loc_x}, #{loc_y} }")
+    # IO.puts("Moved { #{loc_x}, #{loc_y} }")
 
     pieces =
       socket.assigns[:pieces]
-      |> Map.put({loc_x, loc_y}, next_turn(socket.assigns[:whose_turn]))
+      |> Map.put({loc_x, loc_y}, socket.assigns[:whose_turn])
 
     {statuses, winner_piece} =
-      next_statuses({socket.assigns[:statuses], socket.assigns[:whose_turn]}, pieces, {loc_x, loc_y})
+      next_game_state({socket.assigns[:statuses], socket.assigns[:whose_turn]}, {loc_x, loc_y}, pieces)
 
     socket =
       socket
