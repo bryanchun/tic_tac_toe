@@ -1,6 +1,6 @@
 ## Phoenix Guide notes
 
-Stepping through the [Guides](https://hexdocs.pm/phoenix/overview.html)
+My notes for going through the [Phoenix Guides](https://hexdocs.pm/phoenix/overview.html).
 
 
 ### 0. VSCode extensions setup
