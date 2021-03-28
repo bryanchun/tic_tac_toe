@@ -8,7 +8,7 @@ Server-side rendered port of [React's tic-tac-toe tutorial](https://reactjs.org/
 
 - A small project to write some [Elixir](https://elixir-lang.org/) as I learn
   - Elixir is a functional programming language that is good at building real-time things among other things :)
-  - Phoenix is an Elixir web framework, and is positioned similar Rails to Ruby, Django to Python etc.
+  - Phoenix is an Elixir web framework, and is positioned similar to Rails to Ruby, Django to Python etc.
   - LiveView is a Phoenix component for server-side rendering webpages in a real-time manner.
 - A good comparison with the typically client-side rendered React.js
   - How can we server-side render the same interactive game with little-to-none JavaScript?

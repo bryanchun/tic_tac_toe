@@ -111,7 +111,8 @@ defmodule TicTacToeWeb.Components.Board do
 
     # For the rest of still-"available" sqaures, mark them as status "disabled"
     unused_squares = for square <- @squares,
-      square not in won_squares and Map.get(statuses, square) == "available",
+      square not in won_squares,
+      Map.get(statuses, square) == "available",
       do: square
 
     statuses =
@@ -171,6 +172,7 @@ defmodule TicTacToeWeb.Components.Board do
       |> update(:pieces,        fn _ -> @initial_pieces end)
       |> update(:whose_turn,    fn _ -> @initial_whose_turn end)
       |> update(:winner_piece,  fn _ -> @initial_winner_piece end)
+
     {:noreply, socket}
   end
 end
